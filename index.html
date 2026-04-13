@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Available Homes — Home Glow by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+    :root{
+      --ink:#18181B;
+      --ink2:#3F3F46;
+      --muted:#71717A;
+      --border:#E4E4E7;
+      --surface:#FAFAF9;
+      --white:#FFFFFF;
+      --gold:#B8842A;
+      --gold-bg:#FDF8EE;
+      --gold-border:#EDD99A;
+      --green:#1A6B3C;
+      --green-bg:#EDFAF3;
+      --amber:#92500A;
+      --amber-bg:#FEF3C7;
+      --r:12px;
+      --shadow:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.07);
+      --shadow-lg:0 8px 40px rgba(0,0,0,.13);
+    }
+
+    html{scroll-behavior:smooth}
+    body{
+      font-family:'DM Sans',sans-serif;
+      background:var(--surface);
+      color:var(--ink);
+      -webkit-font-smoothing:antialiased;
+    }
+
+    /* ─── FILTER BAR ───────────────────────────── */
+    .filterbar{
+      display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+      padding:24px 24px 0;
+      max-width:1080px;margin:0 auto;
+    }
+    .search-wrap{flex:1;min-width:180px;position:relative}
+    .search-wrap svg{
+      position:absolute;left:12px;top:50%;transform:translateY(-50%);
+      color:var(--muted);pointer-events:none;
+    }
+    .search-wrap input{
+      width:100%;padding:10px 12px 10px 36px;
+      border:1px solid var(--border);border-radius:9px;
+      font-family:'DM Sans',sans-serif;font-size:13.5px;
+      background:var(--white);color:var(--ink);outline:none;
+      transition:border-color .18s,box-shadow .18s;
+    }
+    .search-wrap input:focus{
+      border-color:var(--gold);
+      box-shadow:0 0 0 3px rgba(184,132,42,.1);
+    }
+    .search-wrap input::placeholder{color:var(--muted)}
+    .count-label{font-size:13px;color:var(--muted);white-space:nowrap;margin-left:auto}
+    .count-label strong{color:var(--ink)}
+
+    /* ─── GRID ─────────────────────────────────── */
+    .cards-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+      gap:20px;
+      padding:20px 24px 48px;
+      max-width:1080px;margin:0 auto;
+    }
+
+    /* ─── CARD ─────────────────────────────────── */
+    .prop-card{
+      background:var(--white);border:1px solid var(--border);border-radius:var(--r);
+      overflow:hidden;box-shadow:var(--shadow);
+      transition:transform .22s ease,box-shadow .22s ease;
+      cursor:pointer;
+      animation:fadeUp .35s ease both;
+    }
+    .prop-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+    @keyframes fadeUp{
+      from{opacity:0;transform:translateY(12px)}
+      to  {opacity:1;transform:translateY(0)}
+    }
+
+    .card-thumb{
+      height:170px;
+      background:linear-gradient(135deg,#ddd8ce,#c8c0b5);
+      position:relative;display:flex;align-items:center;justify-content:center;
+      font-size:48px;overflow:hidden;
+    }
+    .card-thumb-overlay{
+      position:absolute;inset:0;
+      background:linear-gradient(to top,rgba(24,24,27,.48) 0%,transparent 52%);
+    }
+    .card-badge{
+      position:absolute;top:10px;right:10px;
+      font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+      padding:4px 9px;border-radius:6px;
+    }
+    .badge-sale{background:var(--ink);color:#fff}
+    .badge-warn{background:var(--amber-bg);color:var(--amber);border:1px solid #FCD34D}
+    .card-price-chip{
+      position:absolute;bottom:10px;left:10px;
+      background:rgba(255,255,255,.94);backdrop-filter:blur(6px);
+      border-radius:7px;padding:4px 10px;
+      font-size:13px;font-weight:700;color:var(--ink);
+    }
+
+    .card-body{padding:16px 16px 14px}
+    .card-address{
+      font-family:'Playfair Display',serif;font-size:16px;font-weight:700;
+      line-height:1.25;color:var(--ink);margin-bottom:2px;
+    }
+    .card-location{font-size:12px;color:var(--muted);margin-bottom:12px}
+
+    .warn-strip{
+      background:var(--amber-bg);border:1px solid #FCD34D;border-radius:7px;
+      padding:8px 10px;margin-bottom:12px;
+      font-size:11.5px;color:var(--amber);line-height:1.5;
+      display:flex;gap:6px;align-items:flex-start;
+    }
+    .warn-strip svg{flex-shrink:0;margin-top:1px}
+
+    .card-specs{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
+    .spec-chip{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:6px;padding:3px 8px;
+      font-size:11.5px;color:var(--ink2);
+    }
+
+    .card-nums{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:14px}
+    .card-num{background:var(--surface);border-radius:8px;padding:8px 9px}
+    .num-l{font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+    .num-v{font-size:13.5px;font-weight:700;color:var(--ink)}
+    .num-v.gold{color:var(--gold)}
+    .num-v.green{color:var(--green)}
+
+    .card-footer{
+      display:flex;align-items:center;justify-content:space-between;
+      padding-top:12px;border-top:1px solid var(--border);gap:8px;
+    }
+    .btn-report{
+      background:var(--ink);color:#fff;border:none;border-radius:8px;
+      padding:8px 14px;font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:600;
+      cursor:pointer;display:flex;align-items:center;gap:5px;transition:background .15s;
+      white-space:nowrap;
+    }
+    .btn-report:hover{background:#333}
+    .btn-listing{
+      color:var(--gold);border:1.5px solid var(--gold-border);
+      border-radius:8px;padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:600;
+      text-decoration:none;display:flex;align-items:center;gap:5px;transition:background .15s;
+      white-space:nowrap;
+    }
+    .btn-listing:hover{background:var(--gold-bg)}
+
+    /* ─── EMPTY STATE ──────────────────────────── */
+    .empty-state{
+      grid-column:1/-1;text-align:center;padding:72px 24px;
+    }
+    .empty-icon{font-size:44px;margin-bottom:14px}
+    .empty-state h3{font-family:'Playfair Display',serif;font-size:21px;margin-bottom:8px}
+    .empty-state p{color:var(--muted);font-size:13.5px}
+
+    /* ─── MODAL BACKDROP ───────────────────────── */
+    .backdrop{
+      display:none;position:fixed;inset:0;z-index:9999;
+      background:rgba(24,24,27,.62);backdrop-filter:blur(5px);
+      align-items:center;justify-content:center;padding:16px;
+    }
+    .backdrop.open{display:flex}
+
+    /* ─── MODAL ────────────────────────────────── */
+    .modal{
+      background:var(--white);border-radius:18px;
+      width:100%;max-width:700px;max-height:92vh;overflow-y:auto;
+      box-shadow:0 24px 64px rgba(0,0,0,.22);
+      animation:mIn .24s cubic-bezier(.34,1.3,.64,1);
+    }
+    @keyframes mIn{
+      from{opacity:0;transform:scale(.95) translateY(10px)}
+      to  {opacity:1;transform:scale(1)   translateY(0)}
+    }
+
+    .modal-top{
+      background:var(--ink);color:#fff;
+      padding:26px 26px 22px;border-radius:18px 18px 0 0;
+      position:relative;overflow:hidden;
+    }
+    .modal-top::after{
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(ellipse 90% 180% at 90% 120%,rgba(184,132,42,.2) 0%,transparent 60%);
+      pointer-events:none;
+    }
+    .modal-close{
+      position:absolute;top:16px;right:16px;
+      background:rgba(255,255,255,.12);border:none;border-radius:50%;
+      width:32px;height:32px;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      transition:background .15s;z-index:1;
+    }
+    .modal-close:hover{background:rgba(255,255,255,.24)}
+    .modal-close svg{color:#fff}
+    .modal-kicker{
+      font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+      color:var(--gold);margin-bottom:7px;position:relative;z-index:1;
+    }
+    .modal-title{
+      font-family:'Playfair Display',serif;
+      font-size:clamp(19px,4vw,25px);font-weight:700;line-height:1.15;
+      margin-bottom:4px;position:relative;z-index:1;
+    }
+    .modal-sub{font-size:13px;color:rgba(255,255,255,.5);position:relative;z-index:1}
+
+    .modal-body{padding:22px 26px 30px}
+
+    .sec-label{
+      font-size:10px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
+      color:var(--muted);padding-bottom:9px;border-bottom:1px solid var(--border);margin-bottom:13px;
+    }
+    .modal-sec{margin-bottom:24px}
+
+    .detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:9px}
+    .dbox{background:var(--surface);border-radius:9px;padding:10px 12px}
+    .dbox-l{font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+    .dbox-v{font-size:13.5px;font-weight:700;color:var(--ink)}
+    .dbox-v.sm{font-size:12.5px;font-weight:500}
+
+    .price-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
+    .pbox{border-radius:10px;padding:13px 14px;text-align:center}
+    .pbox-l{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+    .pbox-v{font-size:19px;font-weight:700;font-family:'Playfair Display',serif}
+    .pbox-sub{font-size:11px;margin-top:3px;color:var(--muted)}
+    .pb-a{background:var(--surface);border:1px solid var(--border)}
+    .pb-t{background:var(--gold-bg);border:1px solid var(--gold-border)}
+    .pb-t .pbox-v{color:var(--gold)}
+    .pb-r{background:var(--green-bg);border:1px solid #A7F3D0}
+    .pb-r .pbox-v{color:var(--green)}
+
+    .terms{list-style:none}
+    .terms li{
+      display:flex;gap:11px;padding:9px 0;
+      border-bottom:1px solid var(--border);
+      font-size:13.5px;line-height:1.55;color:var(--ink2);
+    }
+    .terms li:last-child{border-bottom:none}
+    .tnum{
+      width:20px;height:20px;border-radius:50%;
+      background:var(--ink);color:#fff;
+      display:flex;align-items:center;justify-content:center;
+      font-size:10.5px;font-weight:700;flex-shrink:0;margin-top:2px;
+    }
+
+    .disclaimer{
+      background:var(--surface);border:1px solid var(--border);border-radius:9px;
+      padding:12px 14px;font-size:11.5px;color:var(--muted);line-height:1.65;
+    }
+
+    .modal-warn{
+      background:var(--amber-bg);border:1px solid #FCD34D;border-radius:10px;
+      padding:12px 14px;margin-bottom:22px;
+      font-size:13px;color:var(--amber);line-height:1.55;
+      display:flex;gap:9px;
+    }
+    .modal-warn svg{flex-shrink:0;margin-top:2px}
+
+    .cta-row{display:flex;gap:9px;flex-wrap:wrap;margin-top:6px}
+    .cta-a{
+      background:var(--ink);color:#fff;border:none;border-radius:9px;
+      padding:11px 20px;font-family:'DM Sans',sans-serif;font-size:13.5px;font-weight:600;
+      text-decoration:none;display:inline-flex;align-items:center;gap:6px;cursor:pointer;
+      transition:background .15s;
+    }
+    .cta-a:hover{background:#333}
+    .cta-b{
+      color:var(--gold);border:1.5px solid var(--gold-border);border-radius:9px;
+      padding:11px 18px;font-family:'DM Sans',sans-serif;font-size:13.5px;font-weight:600;
+      text-decoration:none;display:inline-flex;align-items:center;gap:6px;cursor:pointer;
+      transition:background .15s;
+    }
+    .cta-b:hover{background:var(--gold-bg)}
+
+    @media(max-width:600px){
+      .filterbar{padding:16px 14px 0}
+      .cards-grid{padding:14px 14px 40px}
+      .price-row{grid-template-columns:1fr}
+      .modal-body,.modal-top{padding-left:16px;padding-right:16px}
+      .cta-row{flex-direction:column}
+    }
+    @media(max-width:420px){
+      .card-nums{grid-template-columns:1fr 1fr}
+    }
+  </style>
+</head>
+<body>
+
+<!-- Filter bar -->
+<div class="filterbar">
+  <div class="search-wrap">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input type="text" id="searchInput" placeholder="Search by address, city, or ZIP…"/>
+  </div>
+  <span class="count-label" id="countLabel"></span>
+</div>
+
+<!-- Cards -->
+<div class="cards-grid" id="cardsGrid"></div>
+
+<!-- Modal -->
+<div class="backdrop" id="backdrop">
+  <div class="modal" id="modal">
+    <div class="modal-top">
+      <button class="modal-close" id="closeBtn" aria-label="Close">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+      <div class="modal-kicker" id="mKicker"></div>
+      <div class="modal-title"  id="mTitle"></div>
+      <div class="modal-sub"   id="mSub"></div>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+// ─── REGISTRY ─────────────────────────────────────────────────
+// properties.js calls addProperty() for each listing.
+// This array collects them all before the page renders.
+const PROPERTIES = [];
+function addProperty(p) { PROPERTIES.push(p); }
+</script>
+
+<!-- ↓ All property data lives here. Add new ones to the bottom of this file. ↓ -->
+<script src="properties.js"></script>
+
+<script>
+// ─── LABELS & ICONS ───────────────────────────────────────────
+const SPEC_LABELS = {
+  beds:"Beds", baths:"Baths", sqft:"Living Area", lot:"Lot Size",
+  garage:"Garage", pool:"Pool", year:"Year Built", levels:"Levels",
+  basement:"Basement", bonus:"Bonus Room"
+};
+const SPEC_ICONS = {
+  beds:"🛏", baths:"🚿", sqft:"📐", lot:"🌿", garage:"🚗",
+  pool:"🏊", year:"📅", levels:"🏠", basement:"⬇", bonus:"✨"
+};
+const LOC_LABELS = {
+  municipality:"Municipality", county:"County", distToChicago:"Distance to Chicago",
+  highway:"Highway Access", transit:"Transit", university:"Nearby University",
+  district:"School District", schools:"Nearby Schools",
+  highlights:"Area Highlights", medianValue:"Median Home Value"
+};
+
+// ─── CARD ─────────────────────────────────────────────────────
+function cardHtml(p, delay) {
+  const specs = Object.entries(p.specs).slice(0,5)
+    .map(([k,v]) => `<span class="spec-chip">${SPEC_ICONS[k]||''} ${v}</span>`)
+    .join('');
+
+  const warnStrip = p.warn ? `
+    <div class="warn-strip">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+      <span>⚠ Municipal Notice — see full report for details.</span>
+    </div>` : '';
+
+  return `
+  <div class="prop-card" style="animation-delay:${delay}ms"
+       data-id="${p.id}" role="button" tabindex="0"
+       aria-label="View ${p.address} property report">
+    <div class="card-thumb">
+      🏠
+      <div class="card-thumb-overlay"></div>
+      <span class="card-badge ${p.warn ? 'badge-warn' : 'badge-sale'}">
+        ${p.warn ? '⚠ Notice' : 'For Sale'}
+      </span>
+      <span class="card-price-chip">${p.totalCost} Est. Total</span>
+    </div>
+    <div class="card-body">
+      <div class="card-address">${p.address}</div>
+      <div class="card-location">${p.city} &nbsp;·&nbsp; ${p.county}</div>
+      ${warnStrip}
+      <div class="card-specs">${specs}</div>
+      <div class="card-nums">
+        <div class="card-num">
+          <div class="num-l">Acquire</div>
+          <div class="num-v">${p.acquirePrice}</div>
+        </div>
+        <div class="card-num">
+          <div class="num-l">Total Cost</div>
+          <div class="num-v gold">${p.totalCost}</div>
+        </div>
+        <div class="card-num">
+          <div class="num-l">Est. ARV</div>
+          <div class="num-v green">${p.arv}</div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <button class="btn-report" data-id="${p.id}">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+          Full Report
+        </button>
+        <a href="${p.listingUrl}" target="_blank" rel="noopener"
+           class="btn-listing" onclick="event.stopPropagation()">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+          View Listing
+        </a>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ─── MODAL ────────────────────────────────────────────────────
+function openModal(id) {
+  const p = PROPERTIES.find(x => x.id === id);
+  if (!p) return;
+
+  document.getElementById('mKicker').textContent = `Property Report · ${p.reportDate}`;
+  document.getElementById('mTitle').textContent  = p.address;
+  document.getElementById('mSub').textContent    = `${p.city} · ${p.county} · ${p.type}`;
+
+  const specsHtml = Object.entries(p.specs).map(([k,v]) => `
+    <div class="dbox">
+      <div class="dbox-l">${SPEC_LABELS[k]||k}</div>
+      <div class="dbox-v">${v}</div>
+    </div>`).join('');
+
+  const locHtml = Object.entries(p.location).map(([k,v]) => `
+    <div class="dbox">
+      <div class="dbox-l">${LOC_LABELS[k]||k}</div>
+      <div class="dbox-v sm">${v}</div>
+    </div>`).join('');
+
+  const warnHtml = p.warn ? `
+    <div class="modal-warn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+      <span><strong>⚠ Municipal Notice —</strong> ${p.warn}</span>
+    </div>` : '';
+
+  document.getElementById('modalBody').innerHTML = `
+    ${warnHtml}
+
+    <div class="modal-sec">
+      <div class="sec-label">Property Details</div>
+      <div class="detail-grid">${specsHtml}</div>
+    </div>
+
+    <div class="modal-sec">
+      <div class="sec-label">Property Notes</div>
+      <p style="font-size:13.5px;line-height:1.7;color:var(--ink2)">${p.notes}</p>
+    </div>
+
+    <div class="modal-sec">
+      <div class="sec-label">Pricing Structure</div>
+      <div class="price-row">
+        <div class="pbox pb-a">
+          <div class="pbox-l">Acquisition Price</div>
+          <div class="pbox-v">${p.acquirePrice}</div>
+          <div class="pbox-sub">Client purchases under own name</div>
+        </div>
+        <div class="pbox pb-t">
+          <div class="pbox-l">Expected Total Cost</div>
+          <div class="pbox-v">${p.totalCost}</div>
+          <div class="pbox-sub">Total client investment</div>
+        </div>
+        <div class="pbox pb-r">
+          <div class="pbox-l">Est. Value After Reno</div>
+          <div class="pbox-v">${p.arv}</div>
+          <div class="pbox-sub">Tentative post-reno market value</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-sec">
+      <div class="sec-label">Client Payment Terms</div>
+      <ul class="terms">
+        <li><span class="tnum">1</span><span>Client acquires the property under their own name at the listed acquisition price.</span></li>
+        <li><span class="tnum">2</span><span>Renovation cost is split into two equal payments. <strong>50% is due upfront</strong> before work begins.</span></li>
+        <li><span class="tnum">3</span><span>The <strong>remaining 50% is due upon project completion</strong>, once all renovation work is finished and approved.</span></li>
+      </ul>
+    </div>
+
+    <div class="modal-sec">
+      <div class="sec-label">Location Overview</div>
+      <div class="detail-grid">${locHtml}</div>
+    </div>
+
+    <div class="modal-sec">
+      <div class="sec-label">Disclaimer</div>
+      <div class="disclaimer">* ${p.disclaimer}</div>
+    </div>
+
+    <div class="cta-row">
+      <a href="${p.listingUrl}" target="_blank" rel="noopener" class="cta-a">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+          <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+        </svg>
+        View Home Listing
+      </a>
+      <a href="${p.reportUrl}" target="_blank" rel="noopener" class="cta-b">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+        </svg>
+        Full Report Page
+      </a>
+      <a href="https://homeglow.odoo.com/contactus" target="_blank" rel="noopener" class="cta-b">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        Contact Us
+      </a>
+    </div>
+  `;
+
+  document.getElementById('backdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('backdrop').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ─── RENDER ───────────────────────────────────────────────────
+function render(list) {
+  const grid  = document.getElementById('cardsGrid');
+  const label = document.getElementById('countLabel');
+  label.innerHTML = `<strong>${list.length}</strong> propert${list.length === 1 ? 'y' : 'ies'}`;
+
+  if (!list.length) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🔍</div>
+        <h3>No properties found</h3>
+        <p>Try a different search term.</p>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map((p, i) => cardHtml(p, i * 75)).join('');
+
+  grid.querySelectorAll('.prop-card').forEach(card => {
+    card.addEventListener('click', e => {
+      if (e.target.closest('a')) return;
+      openModal(card.dataset.id);
+    });
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') openModal(card.dataset.id);
+    });
+    card.querySelector('.btn-report').addEventListener('click', e => {
+      e.stopPropagation();
+      openModal(card.dataset.id);
+    });
+  });
+}
+
+// ─── SEARCH ───────────────────────────────────────────────────
+function filter() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  render(q
+    ? PROPERTIES.filter(p =>
+        p.address.toLowerCase().includes(q) ||
+        p.city.toLowerCase().includes(q)    ||
+        p.county.toLowerCase().includes(q))
+    : PROPERTIES
+  );
+}
+document.getElementById('searchInput').addEventListener('input', filter);
+
+// ─── MODAL CLOSE EVENTS ───────────────────────────────────────
+document.getElementById('closeBtn').addEventListener('click', closeModal);
+document.getElementById('backdrop').addEventListener('click', e => {
+  if (e.target === document.getElementById('backdrop')) closeModal();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// ─── INIT ─────────────────────────────────────────────────────
+render(PROPERTIES);
+</script>
+</body>
+</html>
